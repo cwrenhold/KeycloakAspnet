@@ -1,11 +1,15 @@
 #!/bin/bash
-# set -e
+
+# Wait 30 seconds for Keycloak to start
+sleep 30
 
 # Keycloak server URL
 KEYCLOAK_URL="http://keycloak:8080/auth"
+
 # Admin credentials
 ADMIN_USERNAME=${KEYCLOAK_USER}
 ADMIN_PASSWORD=${KEYCLOAK_PASSWORD}
+ASPNET_ROOT_URL="https://localhost:${ASPNET_HTTPS_PORT}"
 
 # Function to obtain an admin token
 get_admin_token() {
@@ -28,7 +32,7 @@ create_realm() {
     -X POST \
     -H "Authorization: Bearer $ADMIN_TOKEN" \
     -H "Content-Type: application/json" \
-    -d '{"id":"'"$REALM_NAME"'","realm":"'"$REALM_NAME"'","enabled":true}' \
+    -d '{"id":"'"$REALM_NAME"'","realm":"'"$REALM_NAME"'","enabled":true,"registrationAllowed":true,"loginWithEmailAllowed":false}' \
     "$KEYCLOAK_URL/admin/realms"
 }
 
@@ -41,7 +45,7 @@ create_client() {
     -X POST \
     -H "Authorization: Bearer $ADMIN_TOKEN" \
     -H "Content-Type: application/json" \
-    -d '{"clientId":"'"$CLIENT_NAME"'","secret":"'"$CLIENT_SECRET"'","directAccessGrantsEnabled":true,"enabled":true,"publicClient":false,"redirectUris":["*"]}' \
+    -d '{"clientId":"'"$CLIENT_NAME"'","secret":"'"$CLIENT_SECRET"'","directAccessGrantsEnabled":true,"enabled":true,"publicClient":false,"redirectUris":["*"],"rootUrl":"'"$ASPNET_ROOT_URL"'","baseUrl": "/"}' \
     "$KEYCLOAK_URL/admin/realms/$REALM_NAME/clients"
 }
 

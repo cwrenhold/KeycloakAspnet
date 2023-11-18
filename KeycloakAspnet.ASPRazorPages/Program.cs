@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var appConfig = new ConfigurationBuilder()
+    .AddEnvironmentVariables()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddAuthentication(options =>
@@ -13,36 +18,13 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
     {
-        options.Authority = "http://localhost:8080/auth/realms/my-realm";
-        options.ClientId = "my-application";
-        options.ClientSecret = "my-application-secret";
+        options.Authority = $"{appConfig["KEYCLOAK_ROOT_URL"]}/auth/realms/{appConfig["KEYCLOAK_REALM"]}";
+        options.ClientId = appConfig["KEYCLOAK_CLIENT_ID"];
+        options.ClientSecret = appConfig["KEYCLOAK_CLIENT_SECRET"];
         options.ResponseType = "code";
         options.RequireHttpsMetadata = false;
 
         options.SaveTokens = true;
-
-        options.Events = new OpenIdConnectEvents
-        {
-            OnRedirectToIdentityProviderForSignOut = context =>
-            {
-                var logoutUri = "http://localhost:8080/auth/realms/my-realm/protocol/openid-connect/logout";
-                var postLogoutUri = context.Properties.RedirectUri;
-                if (!string.IsNullOrEmpty(postLogoutUri))
-                {
-                    if (postLogoutUri.StartsWith("/"))
-                    {
-                        // transform to absolute
-                        var request = context.Request;
-                        postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
-                    }
-                    logoutUri += $"?redirect_uri={Uri.EscapeDataString(postLogoutUri)}";
-                }
-                context.Response.Redirect(logoutUri);
-                context.HandleResponse();
-
-                return Task.CompletedTask;
-            }
-        };
     });
 
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();

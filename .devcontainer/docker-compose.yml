@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: App.Dockerfile
+      dockerfile: Dockerfile
       args:
         VARIANT: ${DOTNET_SDK_VERSION}
 

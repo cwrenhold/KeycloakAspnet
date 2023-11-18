@@ -8,11 +8,12 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"GitHub.copilot"
+				"GitHub.copilot",
+				"ms-dotnettools.csdevkit"
 			]
 		}
 	},
-	"postCreateCommand": "/workspaces/${localWorkspaceFolderBasename}/.devcontainer/post-create.sh"
+	"postCreateCommand": "cd /workspaces/${localWorkspaceFolderBasename}/.devcontainer/ && ./post-create.sh"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
