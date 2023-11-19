@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/KeycloakAspnet.ASPRazorPages/bin/Debug/net7.0/KeycloakAspnet.ASPRazorPages.dll",
+            "program": "${workspaceFolder}/KeycloakAspnet.ASPRazorPages/bin/Debug/net8.0/KeycloakAspnet.ASPRazorPages.dll",
             "args": [],
             "cwd": "${workspaceFolder}/KeycloakAspnet.ASPRazorPages",
             "stopAtEntry": false,
